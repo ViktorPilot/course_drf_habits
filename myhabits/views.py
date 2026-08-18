@@ -1,39 +1,40 @@
-from django.shortcuts import render
+from rest_framework.permissions import IsAuthenticated
 from rest_framework import generics
 from myhabits.models import Habit
 from myhabits.serializers import HabitSerializer
+from users.permissions import IsOwner
 
 
-class HabiListAPIView(generics.ListAPIView):
+class HabitListAPIView(generics.ListAPIView):
     """Контроллер API списка привычек"""
 
     serializer_class = HabitSerializer
     queryset = Habit.objects.all()
-    # permission_classes = [IsAuthenticated, IsModerators | IsOwner]
+    permission_classes = [IsAuthenticated]
     # pagination_class = MyPagination
 
 
-class LessonUpdateAPIView(generics.UpdateAPIView):
+class HabitUpdateAPIView(generics.UpdateAPIView):
     """Контроллер API редактирования существующей привычки"""
 
     serializer_class = HabitSerializer
     queryset = Habit.objects.all()
-    # permission_classes = [IsAuthenticated, IsModerators | IsOwner]
+    permission_classes = [IsAuthenticated, IsOwner]
 
 
-class LessonRetrieveAPIView(generics.RetrieveAPIView):
+class HabitRetrieveAPIView(generics.RetrieveAPIView):
     """Контроллер API данных привычки"""
 
     serializer_class = HabitSerializer
     queryset = Habit.objects.all()
-    # permission_classes = [IsAuthenticated, IsModerators | IsOwner]
+    permission_classes = [IsAuthenticated, IsOwner]
 
 
-class LessonCreateAPIView(generics.CreateAPIView):
+class HabitCreateAPIView(generics.CreateAPIView):
     """Контроллер API создания новой привычки"""
 
     serializer_class = HabitSerializer
-    # permission_classes = [IsAuthenticated, ~IsModerators]
+    permission_classes = [IsAuthenticated]
 
     # def perform_create(self, serializer):
     #     """Метод добавляет авторизованного пользователя в поле владельца лекции"""
@@ -42,9 +43,9 @@ class LessonCreateAPIView(generics.CreateAPIView):
     #     lesson.save()
 
 
-class LessonDestroyAPIView(generics.DestroyAPIView):
+class HabitDestroyAPIView(generics.DestroyAPIView):
     """Контроллер API удаления существующей привычки"""
 
     serializer_class = HabitSerializer
     queryset = Habit.objects.all()
-    # permission_classes = [IsAuthenticated, ~IsModerators & IsOwner]
+    permission_classes = [IsAuthenticated, IsOwner]
