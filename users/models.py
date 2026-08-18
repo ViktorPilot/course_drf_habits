@@ -8,7 +8,7 @@ class User(AbstractUser):
     username = None
 
     email = models.EmailField(unique=True, verbose_name="Почта")
-
+    phone = models.CharField(max_length=15, null=True, blank=True, verbose_name="Номер телефона")
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = []
 
