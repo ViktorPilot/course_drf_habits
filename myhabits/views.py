@@ -12,6 +12,9 @@ class HabitListAPIView(generics.ListAPIView):
     queryset = Habit.objects.all()
     permission_classes = [IsAuthenticated]
     # pagination_class = MyPagination
+    def get_queryset(self):
+        """Метод фильтрует привычки по признаку публичности True"""
+        return Habit.objects.filter(is_public=True)
 
 
 class HabitUpdateAPIView(generics.UpdateAPIView):
