@@ -1,7 +1,7 @@
 from rest_framework import serializers
 
 from myhabits.models import Habit
-from myhabits.validators import validate_connection_habit_or_present
+from myhabits.validators import validate_connection_habit_or_present, validate_time_habit, validate_habit_a_week
 
 
 class HabitSerializer(serializers.ModelSerializer):
@@ -14,5 +14,10 @@ class HabitSerializer(serializers.ModelSerializer):
         """Метод валидирует привязку связанной привычки или вознаграждения"""
         connection_habit = attrs.get('connection_habit')
         present = attrs.get('present')
-        validate_connection_habit_or_present(connection_habit, present)
+        is_pleasure = attrs.get('is_pleasure')
+        validate_connection_habit_or_present(connection_habit, present, is_pleasure)
+        time_habit = attrs.get('time_habit')
+        validate_time_habit(time_habit)
+        period = attrs.get('period')
+        validate_habit_a_week(period)
         return attrs

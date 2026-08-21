@@ -1,6 +1,7 @@
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import generics
 from myhabits.models import Habit
+from myhabits.pagination import MyPagination
 from myhabits.serializers import HabitSerializer
 from users.permissions import IsOwner
 
@@ -10,11 +11,12 @@ class HabitListAPIView(generics.ListAPIView):
 
     serializer_class = HabitSerializer
     queryset = Habit.objects.all()
-    permission_classes = [IsAuthenticated]
-    # pagination_class = MyPagination
+    permission_classes = [IsAuthenticated, IsOwner]
+    pagination_class = MyPagination
+
     def get_queryset(self):
-        """Метод фильтрует привычки по признаку публичности True"""
-        return Habit.objects.filter(is_public=True)
+        """Метод фильтрует привычки по текущему пользователю"""
+        return Habit.objects.filter(owner=self.request.user)
 
 
 class HabitUpdateAPIView(generics.UpdateAPIView):
@@ -52,3 +54,14 @@ class HabitDestroyAPIView(generics.DestroyAPIView):
     serializer_class = HabitSerializer
     queryset = Habit.objects.all()
     permission_classes = [IsAuthenticated, IsOwner]
+
+class AllHabitListAPIView(generics.ListAPIView):
+    """Контроллер API списка привычек всех пользователей с признаком публичности True"""
+
+    serializer_class = HabitSerializer
+    queryset = Habit.objects.all()
+    permission_classes = [IsAuthenticated]
+    pagination_class = MyPagination
+    def get_queryset(self):
+        """Метод фильтрует привычки по признаку публичности True"""
+        return Habit.objects.filter(is_public=True)
