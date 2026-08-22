@@ -1,3 +1,5 @@
+from datetime import datetime, timezone
+
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import generics
 from myhabits.models import Habit
@@ -61,7 +63,7 @@ class AllHabitListAPIView(generics.ListAPIView):
     serializer_class = HabitSerializer
     queryset = Habit.objects.all()
     permission_classes = [IsAuthenticated]
-    pagination_class = MyPagination
+
     def get_queryset(self):
         """Метод фильтрует привычки по признаку публичности True"""
         return Habit.objects.filter(is_public=True)
