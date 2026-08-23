@@ -26,7 +26,7 @@
 
 1. Клонируйте репозиторий:
     ```
-     https://github.com/ViktorPilot/course_drf-habits.git
+     https://github.com/ViktorPilot/course_drf_habits.git
     ```
 2. Запустите PyCharm у себя на компьютере.
 3. Откройте скачанный репозиторий в PyCharm.
