@@ -211,7 +211,6 @@ class HabitAPITestCase(APITestCase):
             data,
             format="json",
         )
-        print(response.json())
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(Habit.objects.all().count(), 2)
         self.assertEqual(
