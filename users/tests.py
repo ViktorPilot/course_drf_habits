@@ -1,6 +1,7 @@
 from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
+
 from users.models import User
 
 
@@ -26,16 +27,24 @@ class UserAPITestCase(APITestCase):
     def test_user_create(self):
         """Тестирование создания пользователя"""
         url = reverse("users:user-register")
-        data = {"email":"test_2@ya.ru", "phone":"89991112233", "tg_chat_id":"222222222", "password":"12345"}
-        response = self.client.post(url, data, format="json", )
+        data = {"email": "test_2@ya.ru", "phone": "89991112233", "tg_chat_id": "222222222", "password": "12345"}
+        response = self.client.post(
+            url,
+            data,
+            format="json",
+        )
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(User.objects.all().count(), 3)
 
     def test_user_update(self):
         """Тестирование изменения данных по пользователю"""
         url = reverse("users:user-update", args=(self.user.pk,))
-        data = {"email":"test@ya.ru", "phone":"89997775533", "tg_chat_id":"222222222", "password":"12345"}
-        response = self.client.patch(url, data, format="json", )
+        data = {"email": "test@ya.ru", "phone": "89997775533", "tg_chat_id": "222222222", "password": "12345"}
+        response = self.client.patch(
+            url,
+            data,
+            format="json",
+        )
         data = response.json()
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(data.get("phone"), "89997775533")

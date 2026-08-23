@@ -5,7 +5,6 @@ from users.models import User
 from users.serializers import UserSerializer
 
 
-
 class UserUpdateAPIView(generics.UpdateAPIView):
     """Контроллер API редактирования существующего пользователя"""
 
