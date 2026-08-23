@@ -3,10 +3,10 @@ from users.models import User
 
 
 class UserSerializer(serializers.ModelSerializer):
-    """Сериализатор модели пользователя"""
+    """Сериализатор экземпляра модели пользователя"""
 
     class Meta:
-        """Метакласс сериализатора пользователя"""
+        """Метакласс сериализатора модели пользователя"""
 
         model = User
         fields = "__all__"

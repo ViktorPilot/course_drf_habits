@@ -10,7 +10,7 @@ from myhabits.services import send_telegram_message
 
 @shared_task
 def send_habit():
-    """Отправляет сообщение в установленное время о начале выполнения привычки"""
+    """Метод отправляет сообщение о начале выполнения привычки в установленное время """
     current_time = timezone.now()
     start = current_time.replace(second=0, microsecond=0)
     end = start + timedelta(minutes=1)

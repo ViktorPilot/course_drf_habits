@@ -5,13 +5,14 @@ from myhabits.validators import validate_connection_habit_or_present, validate_t
 
 
 class HabitSerializer(serializers.ModelSerializer):
-
+    """Сериализатор экземпляра модели привычки"""
     class Meta:
+        """Метакласс сериализатора привычки"""
         model = Habit
         fields = '__all__'
 
     def validate(self, attrs):
-        """Метод валидирует привязку связанной привычки или вознаграждения"""
+        """Метод валидирует привычку в зависимости от заданных заданием условий"""
         connection_habit = attrs.get('connection_habit')
         present = attrs.get('present')
         is_pleasure = attrs.get('is_pleasure')

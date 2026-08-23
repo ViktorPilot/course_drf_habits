@@ -1,5 +1,3 @@
-from datetime import datetime, timezone
-
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import generics
 from myhabits.models import Habit
@@ -42,13 +40,6 @@ class HabitCreateAPIView(generics.CreateAPIView):
 
     serializer_class = HabitSerializer
     permission_classes = [IsAuthenticated]
-
-    # def perform_create(self, serializer):
-    #     """Метод добавляет авторизованного пользователя в поле владельца лекции"""
-    #     lesson = serializer.save()
-    #     lesson.owner = self.request.user
-    #     lesson.save()
-
 
 class HabitDestroyAPIView(generics.DestroyAPIView):
     """Контроллер API удаления существующей привычки"""

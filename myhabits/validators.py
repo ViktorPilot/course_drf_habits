@@ -22,6 +22,5 @@ def validate_time_habit(time_habit):
 
 def validate_habit_a_week(period):
     """Метод валидирует периодичность выполнения привычки не реже 1 раза в неделю"""
-    if period:
-        if period < 1:
-            raise serializers.ValidationError("Периодичность выполнения привычки должна быть не реже 1 раза в неделю")
+    if period == 0:
+        raise serializers.ValidationError("Периодичность выполнения привычки должна быть не реже 1 раза в неделю")
