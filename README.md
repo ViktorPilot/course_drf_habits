@@ -20,6 +20,13 @@
 + ipython 9.16.1
 + drf-yasg 1.21.15
 + stripe 15.5.0
++ Docker / Docker Compose
++ celery 5.6.3
++ redis 8.1.0
++ gunicorn 26.2.0
++ nginx
++ GitHub Actions
++ Docker Hub
 Все контроллеры имеют способ определения и обработки представлений в DRF с помощью классов(метод CBV).
 
 ## Установка:
@@ -43,6 +50,95 @@
 где крайним значением указан порт запускаемого сервера.
 2. Создайте миграции командой `python manage.py makemigrations`.
 3. Примените миграции командой `python manage.py migrate`.
+
+## При работе через DOCKER:
+
+1. Перед запуском установите Docker Desktop по ссылке `https://www.docker.com/products/docker-desktop` для WINDOWS, 
+`https://docs.docker.com/engine/install/ubuntu/` для Linux.
+2. Клонируйте репозиторий:
+    ```
+     https://github.com/ViktorPilot/course_drf_habits.git
+    ```
+3. Создайте и заполните файл .env.
+4. Запустите Docker Compose `docker compose up --build`.
+5. Проверьте состояние контейнеров `docker compose ps`.
+6. После запуска контейнера приложение доступно по адресу: `http://localhost:8000`.
+7. Далее выполняйте работу с `myhabits` и `users`.
+
+## Production-развертывание:
+
+Production-развертывание выполняется с использованием Docker Compose, Docker Hub и GitHub Actions.
+Production-конфигурация находится в: `docker-compose.prod.yaml`
+Для production используются Docker-образы:
+- `drf-habits`
+- `drf-habits-nginx`
+
+Образы собираются автоматически в GitHub Actions и публикуются в Docker Hub.
+На сервере выполняется получение актуальных образов и запуск контейнеров через:
+- `docker compose -f docker-compose.prod.yaml pull`
+- `docker compose -f docker-compose.prod.yaml up -d`
+
+Приложение работает за Nginx, который принимает внешние HTTP-запросы и передает их Django/Gunicorn.
+
+## CI/CD:
+
+Для автоматизации тестирования и развертывания используется GitHub Actions.
+Workflow запускается автоматически при:
+- `push`;
+- `pull_request`.
+
+Pipeline состоит из последовательных этапов: Test → Lint → Build → Deploy
+
+### Test:
+
+На этапе тестирования:
+- запускается PostgreSQL;
+- устанавливается Python;
+- устанавливается Poetry;
+- устанавливаются зависимости;
+- выполняются Django migrations;
+- запускаются тесты проекта.
+При ошибке тестов pipeline останавливается.
+
+### Lint:
+
+После успешного прохождения тестов запускается Flake8: `poetry run flake8`.
+При наличии ошибок линтера дальнейшие этапы не выполняются.
+
+### Build:
+
+После успешных тестов и линтера собираются Docker-образы:
+- `drf-habits`
+- `drf-habits-nginx`
+После сборки образы отправляются в Docker Hub.
+
+### Deploy:
+
+После успешной сборки GitHub Actions подключается к production-серверу по SSH.
+На сервере выполняются:
+
+- `git pull`
+- `docker compose -f docker-compose.prod.yaml pull`
+- `docker compose -f docker-compose.prod.yaml up -d`
+
+Таким образом, после успешного push новая версия приложения автоматически проходит тестирование, 
+собирается в Docker-образы и разворачивается на сервере.
+
+## Переменные окружения и Secrets:
+
+Чувствительные данные не хранятся непосредственно в исходном коде.
+Для локальной работы используется: .env
+
+Шаблон переменных окружения находится в: .env.example
+
+Секретные данные CI/CD хранятся в GitHub Secrets, в том числе:
+- `SSH_PRIVATE_KEY` — приватный SSH-ключ для подключения к серверу;
+- `SSH_USER` — пользователь сервера;
+- `SSH_HOST` — адрес сервера;
+- `DOCKERHUB_USERNAME` — имя пользователя Docker Hub;
+- `DOCKERHUB_TOKEN` — токен Docker Hub.
+
+Файлы .env, виртуальные окружения, кэш Python и другие временные файлы исключены из Git с помощью .gitignore.
 
 ## Порядок работы с `myhabits` и `users`:
 
