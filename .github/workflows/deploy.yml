@@ -111,6 +111,7 @@ jobs:
 
   deploy:
     needs: build
+    if: github.event_name == 'push' && github.ref == 'refs/heads/task_2'
     runs-on: ubuntu-latest
 
     steps:
@@ -123,15 +124,15 @@ jobs:
         run: |
           ssh -o StrictHostKeyChecking=no \
             ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} << 'EOF'
-
+          
             cd ~/course_drf_habits
-
+          
             git pull origin task_2
-
+          
             docker compose -f docker-compose.prod.yaml pull
-
+          
             docker compose -f docker-compose.prod.yaml up -d
-
+          
             docker compose -f docker-compose.prod.yaml ps
-
+          
           EOF
