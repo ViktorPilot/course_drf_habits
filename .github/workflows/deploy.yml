@@ -1,6 +1,12 @@
 name: Django CI with Poetry
 
-on: [push, pull_request]
+on:
+  push:
+    branches:
+      - task_2
+  pull_request:
+    branches:
+      - task_2
 
 jobs:
   test:
@@ -28,6 +34,7 @@ jobs:
       PASSWORD: test_password
       HOST: localhost
       PORT: 5432
+      DEBUG: "True"
 
     steps:
       - name: Check out code
@@ -41,7 +48,7 @@ jobs:
       - name: Install Poetry
         run: |
           curl -sSL https://install.python-poetry.org | python3 -
-          echo "export PATH=\"$HOME/.local/bin:$PATH\"" >> $GITHUB_ENV
+          echo "$HOME/.local/bin" >> $GITHUB_PATH
 
       - name: Install dependencies
         run: poetry install --no-root
@@ -68,7 +75,7 @@ jobs:
       - name: Install Poetry
         run: |
           curl -sSL https://install.python-poetry.org | python3 -
-          echo "export PATH=\"$HOME/.local/bin:$PATH\"" >> $GITHUB_ENV
+          echo "$HOME/.local/bin" >> $GITHUB_PATH
 
       - name: Install dependencies
         run: poetry install --no-root
@@ -97,7 +104,7 @@ jobs:
         run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/drf-habits:latest
 
       - name: Build nginx image
-        run: docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/drf-habits:latest ./nginx
+        run: docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/drf-habits-nginx:latest ./nginx
 
       - name: Push nginx image
         run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/drf-habits-nginx:latest
@@ -110,21 +117,21 @@ jobs:
       - name: Set up SSH
         uses: webfactory/ssh-agent@v0.9.1
         with:
-          ssh-private-key: ${{ secrets.SSH_KEY }}
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
       - name: Deploy to Server
         run: |
           ssh -o StrictHostKeyChecking=no \
-            ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }} << 'EOF'
+            ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} << 'EOF'
 
-            cd ~/drf-learning
+            cd ~/course_drf_habits
 
-            git pull
-
-            docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" -p "${{ secrets.DOCKERHUB_TOKEN }}"
+            git pull origin task_2
 
             docker compose -f docker-compose.prod.yaml pull
 
             docker compose -f docker-compose.prod.yaml up -d
+
+            docker compose -f docker-compose.prod.yaml ps
 
           EOF
